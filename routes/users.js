@@ -31,11 +31,22 @@ router.get("/:userId/shows", async function (req, res) {
     res.json(shows);
 });
 
-router.put("/:userId/shows/:showId", async function (req, res) {
+router.post("/:userId/shows/:showId", async function (req, res) {
     const user = await User.findByPk(req.params.userId);
+
+    if (!user) {
+        res.status(404).json({ error: "User not found" });
+        return;
+    }
+
     const show = await Show.findByPk(req.params.showId);
 
-    const setShow = await user.addShow(show);
+    if (!show) {
+        res.status(404).json({ error: "Show not found" });
+        return;
+    }
+
+    await user.addShow(show);
     res.send("Movie has been added to user's watched list");
 });
 
