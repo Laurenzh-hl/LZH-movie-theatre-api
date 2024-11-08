@@ -3,6 +3,19 @@ const { User, Show } = require("../models/index");
 const router = Router();
 const { check, validationResult, matchedData } = require("express-validator");
 
+// router.post("/", 
+//     check("title").isLength({ min: 0, max:25 }),
+//     async function(req, res) {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//         res.json({error: errors.array()})
+//     } else {
+//     const show = await Show.create(req.body);
+//     const shows = await Show.findAll();
+//     res.json(shows);
+//     }
+// })
+
 router.get("/", async function(req, res) {
     const shows = await Show.findAll();
     res.json(shows);
@@ -27,7 +40,7 @@ router.get("/:showId/users", async function (req, res) {
         return;
     }
 
-    const users = show.getUsers();
+    const users = await show.getUsers();
     res.json(users);
 });
 
@@ -47,10 +60,16 @@ router.delete("/:showId", async function (req, res) {
     res.send("Movie removed");
 })
 
-router.get("/:showGenre", async function (req, res) {
-    const showsWithGenre = await Show.findAll({where: {genre: req.params.showGenre}});
-    res.json(showsWithGenre);
-})
+router.get("/genre/:genre", async function (req, res) {
+ const showsWithGenre = [];
+ const shows = await Show.findAll();
+ for (let i = 0; i < shows.length; i++) {
+     if ((shows[i].genre).toLowerCase() == req.params.genre) {
+         showsWithGenre.push(shows[i]);
+    }
+}
+ res.json(showsWithGenre);
+});
 
 
 module.exports = router;

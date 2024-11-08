@@ -27,15 +27,15 @@ router.get("/:userId/shows", async function (req, res) {
         return;
     }
 
-    const shows = user.getShows();
+    const shows = await user.getShows();
     res.json(shows);
 });
 
-router.put("/:userID/shows/:showId", async function (req, res) {
+router.put("/:userId/shows/:showId", async function (req, res) {
     const user = await User.findByPk(req.params.userId);
     const show = await Show.findByPk(req.params.showId);
 
-    await user.addShow(show)
+    const setShow = await user.addShow(show);
     res.send("Movie has been added to user's watched list");
 });
 
